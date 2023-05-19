@@ -16,7 +16,7 @@ const DndContents = () => {
         let cpColumns = JSON.parse(JSON.stringify(columns))
         for (const index in cpColumns) {
             let column = cpColumns[index]
-            column.items = data[index].items
+            column.items = data[index].items.filter(Boolean)
         }
         console.log("cpColumns");
         console.log(cpColumns);
