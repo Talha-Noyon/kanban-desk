@@ -7,11 +7,13 @@ import {ContentBox, ContentEdit, CreateTask} from "../../styles/styled-component
 import {useState} from "react";
 import CreateTaskModal from "./CreateTaskModal.jsx";
 import {getUniqueId} from "../../utils/utils";
+import ToolTip from "./ToolTip";
 
 const DndContents = () => {
     const dispatch = useDispatch();
     const {columns} = useSelector((state) => state.kanbanData);
     const [addTaskModal, setAddTaskModal] = useState({active: false});
+    const [tooltipModal, setToolTipModal] = useState({active: false, currentTarget: null, columnId: ""});
     const formatPosition = (data) => {
         let cpColumns = JSON.parse(JSON.stringify(columns))
         for (const index in cpColumns) {
@@ -77,8 +79,38 @@ const DndContents = () => {
     }
 
     const addNewTask = (columnId) => {
-        setAddTaskModal((prev) => {return {...prev, columnId, active: !prev.active}})
+        setAddTaskModal((prev) => {return {...prev, columnId, active: !prev.active, operation: "create"}})
     }
+
+    const editTask = () => {
+        let {item, columnId} = tooltipModal
+        setAddTaskModal((prev) => {
+            return {...prev, columnId, active: !prev.active, item, operation: "edit"}
+        })
+    }
+    const delTask = () => {
+        var result = confirm("Are you sure you want to delete?");
+        if (result) {
+            let {columnId, item} = tooltipModal
+            let cpColumns = JSON.parse(JSON.stringify(columns))
+            for (const index in cpColumns) {
+                let column = cpColumns[index]
+                if (columnId === index) {
+                    column.items = column.items.filter(colItem => colItem.key !== item.key)
+                }
+            }
+            console.log("tooltipModal")
+            console.log(tooltipModal)
+            console.log("cpColumns")
+            console.log(cpColumns)
+            dispatch(setKanbanData(cpColumns));
+        }
+    }
+
+    const modifyTasks = (active, columnId, target, item) => {
+        setToolTipModal({columnId, active, currentTarget: target, item})
+    }
+
     const addTaskByColumn = ({columnId, title, details}) => {
         let cpColumns = JSON.parse(JSON.stringify(columns))
         for (const index in cpColumns) {
@@ -96,11 +128,33 @@ const DndContents = () => {
         console.log(cpColumns);
         dispatch(setKanbanData(cpColumns));
     }
+
+    const editTaskByColumn = ({item, columnId, title, details}) => {
+        let cpColumns = JSON.parse(JSON.stringify(columns))
+        for (const index in cpColumns) {
+            let column = cpColumns[index]
+            if (columnId === index) {
+                for (let colItem of column.items) {
+                    if (colItem.key === item.key) {
+                        colItem.label = title
+                        colItem.details = details
+                        colItem.updatedAt = Date.now()
+                    }
+                }
+            }
+        }
+        console.log("cpColumns");
+        console.log(cpColumns);
+        dispatch(setKanbanData(cpColumns));
+    }
+
     const closeAddTaskModal = (data) => {
         if (data) {
-            let {columnId, title, details} = data
-            if (title.length > 0 && details.length > 0) {
+            let {item, columnId, title, details} = data
+            if (!item && title.length > 0 && details.length > 0) {
                 addTaskByColumn({columnId, title, details})
+            } else {
+                editTaskByColumn({item, columnId, title, details})
             }
         }
         setAddTaskModal((prev) => {return {...prev, active: false}})
@@ -156,7 +210,7 @@ const DndContents = () => {
                                                                             >
                                                                                 <div className="d-flex justify-content-between">
                                                                                     <h6 className="d-inline-block m-0">{item.label}</h6>
-                                                                                    <ContentEdit className="align-items-center card d-flex p-1">. . .</ContentEdit>
+                                                                                    <ContentEdit className="align-items-center card d-flex p-1" onClick={(e) => {modifyTasks(!tooltipModal.active, columnId, e.target, item)}}>. . .</ContentEdit>
                                                                                 </div>
                                                                                 <p className="text-secondary small">{item.details}</p>
                                                                                 <small className="alert alert-warning badge m-0 p-2">{moment(item.createdAt).format('DD MMM YYYY')}</small>
@@ -179,6 +233,9 @@ const DndContents = () => {
                 })}
             </DragDropContext>
             <CreateTaskModal addTaskModal={addTaskModal} closeAddTaskModal={closeAddTaskModal} />
+            {tooltipModal.currentTarget && (
+                <ToolTip tooltipModal={tooltipModal} editTask={editTask} delTask={delTask} />
+            )}
         </div>
     );
 }

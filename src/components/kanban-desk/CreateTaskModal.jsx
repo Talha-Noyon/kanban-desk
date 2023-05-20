@@ -4,12 +4,13 @@ import PropTypes from 'prop-types';
 import {useRef} from 'react';
 
 const CreateTaskModal = ({addTaskModal, closeAddTaskModal}) => {
+  const {item} = addTaskModal;
   const titleRef = useRef();
   const detailsRef = useRef();
     return (
         <Modal show={addTaskModal.active} onHide={closeAddTaskModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Create Task</Modal.Title>
+          <Modal.Title>{item? "Edit Task": "Create Task"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -18,6 +19,7 @@ const CreateTaskModal = ({addTaskModal, closeAddTaskModal}) => {
               <Form.Control
                 ref={titleRef}
                 type="text"
+                defaultValue={item?.label}
                 autoFocus
               />
             </Form.Group>
@@ -26,7 +28,7 @@ const CreateTaskModal = ({addTaskModal, closeAddTaskModal}) => {
               controlId="exampleForm.ControlTextarea1"
             >
               <Form.Label>Bit more</Form.Label>
-              <Form.Control ref={detailsRef} as="textarea" rows={3} />
+              <Form.Control ref={detailsRef} as="textarea" rows={3} defaultValue={item?.details}/>
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -34,8 +36,8 @@ const CreateTaskModal = ({addTaskModal, closeAddTaskModal}) => {
           <Button variant="secondary" onClick={() => closeAddTaskModal()}>
             Close
           </Button>
-          <Button variant="primary" onClick={() => closeAddTaskModal({columnId: addTaskModal.columnId, title: titleRef?.current?.value, details: detailsRef?.current?.value})}>
-            Save Changes
+          <Button variant="primary" onClick={() => closeAddTaskModal({item, columnId: addTaskModal.columnId, title: titleRef?.current?.value, details: detailsRef?.current?.value})}>
+            {item? "Edit": "Save"}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -43,7 +45,7 @@ const CreateTaskModal = ({addTaskModal, closeAddTaskModal}) => {
 }
 export default CreateTaskModal
 CreateTaskModal.propTypes = {
-  addTaskModal: PropTypes.Boolean,
-  closeAddTaskModal: PropTypes.node,
+  addTaskModal: PropTypes.object,
+  closeAddTaskModal: PropTypes.func,
   columnId: PropTypes.node
 };
