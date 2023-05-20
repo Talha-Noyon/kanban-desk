@@ -1,15 +1,6 @@
 ### Project Name
 Kanban Desk
 
-Table of Contents
-Installation
-Usage
-Features
-Contributing
-License
-Installation
-Clone the repository:
-
 
 ### Installation
 1. Clone the repository:
