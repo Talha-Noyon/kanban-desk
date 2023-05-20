@@ -9,7 +9,7 @@ const RouteList = () => {
         <Layout>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<KanbanDesk title="Kanban Desk" icon={toAbsoluteUrl("assets/kanban-desk/icon.png")} />} />
+                    <Route path="/kanban-desk" element={<KanbanDesk title="Kanban Desk" icon={toAbsoluteUrl("assets/kanban-desk/icon.png")} />} />
                 </Routes>
             </BrowserRouter>
         </Layout>
