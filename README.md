@@ -17,3 +17,8 @@ Kanban Desk
    yarn start
 
 Open your browser and visit http://localhost:8080 to see the app
+
+### Live Link
+1. https://static.idesk360.com/kanban-desk/
+
+
