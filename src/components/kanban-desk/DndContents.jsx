@@ -20,8 +20,6 @@ const DndContents = () => {
             let column = cpColumns[index]
             column.items = data[index].items.filter(Boolean)
         }
-        console.log("cpColumns");
-        console.log(cpColumns);
         dispatch(setKanbanData(cpColumns));
     }
 
@@ -99,10 +97,6 @@ const DndContents = () => {
                     column.items = column.items.filter(colItem => colItem.key !== item.key)
                 }
             }
-            console.log("tooltipModal")
-            console.log(tooltipModal)
-            console.log("cpColumns")
-            console.log(cpColumns)
             dispatch(setKanbanData(cpColumns));
         }
     }
@@ -124,8 +118,6 @@ const DndContents = () => {
                 })
             }
         }
-        console.log("cpColumns");
-        console.log(cpColumns);
         dispatch(setKanbanData(cpColumns));
     }
 
@@ -143,8 +135,6 @@ const DndContents = () => {
                 }
             }
         }
-        console.log("cpColumns");
-        console.log(cpColumns);
         dispatch(setKanbanData(cpColumns));
     }
 
